@@ -2,10 +2,12 @@ var Bot = require('slackbots');
 var openurl = require("openurl");
 var url = require('is-url');
 var token = process.env.BOT_API_KEY;
+var name = process.env.BOT_NAME;
+
 // create a bot
 var settings = {
     token: token,
-    name: 'DJ Abdul'
+    name: name
 };
 var bot = new Bot(settings);
 
