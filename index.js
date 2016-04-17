@@ -1,5 +1,6 @@
 var Bot = require('slackbots');
 var openurl = require("openurl");
+var url = require('is-url');
 var token = process.env.BOT_API_KEY;
 // create a bot
 var settings = {
@@ -7,6 +8,17 @@ var settings = {
     name: 'DJ Abdul'
 };
 var bot = new Bot(settings);
+
+var getUserById = function(userId, callback){
+     bot.getUsers().then(function(users){
+        users.members.forEach(function(user){
+            if(user.id === userId){
+                callback(user);
+            }
+        })
+        callback(user);
+    });
+}
 
 bot.on('start', function() {
     bot.postMessageToChannel('chennai', 'Hello channel!');
@@ -17,8 +29,14 @@ bot.on('message', function(message) {
     if(message.type === 'message'){
         if(message.subtype !== 'bot_message'){
             if(message.channel.startsWith('D')){
-                var text = message.text;
-                openurl.open(text.substring(1, text.length - 1));
+                getUserById(message.user, function(user){
+                    var videoUrl = message.text.substring(1, message.text.length - 1);
+                    if(url(videoUrl)){
+                        openurl.open(videoUrl);
+                    }else {
+                        bot.postMessageToUser(user.name, 'Dude... I understand only URLs as of now');
+                    }
+                });
             }
         }
     }
